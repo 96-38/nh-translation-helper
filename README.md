@@ -1,0 +1,1 @@
+# nh-translation-helper
