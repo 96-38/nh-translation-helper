@@ -24,9 +24,26 @@ $ npm i -g nh-translation-helper
 
 ## Features
 
-- Extract the text (dialogue, ship logs, etc.) from XML files and generate a english.json.
-- Generate a json file instantly for another language based on english.json.(DeepL API Key required)
-- Easy to use and interactive.
+- Generate english.json
+  - Extract the text (dialogue, ship logs, etc.) from XML files and generate a english.json
+- Translate JSON
+
+  - Generate a json file instantly for another language (DeepL API Key required)
+  - Supported Languages (inter-translatable)
+    - english : en-US
+    - spanish_la : es
+    - german : de
+    - french : fr
+    - italian : it
+    - polish : pl
+    - portuguese_br : pt-BR
+    - japanese : ja
+    - russian : ru
+    - chinese_simple : zh
+    - turkish : tr
+
+- Easy to use
+  - Interactive UI so you just answer questions
 
 ## Usage
 
@@ -38,11 +55,12 @@ When you run for the first time, please set the API KEY.
 
 ## Note
 
-- Not supported extract UIDictionary and AchievementTranslations.
+- Not supported extract UIDictionary and AchievementTranslations
   - It is difficult to parse these automatically, and the number of words is small that it would be better to add them manually for better results.
-- Not supported translation into Korean.
+- Not supported translation into Korean
   - Translation is provided by the DeepL API, so it is not possible to translate into languages that are not supported by DeepL.
-- The generated translations are “not” perfect.
+- The generated translations are “not” perfect
+  - It is a machine translation though DeepL. The translations on DeepL are known to be too casual or to abbreviate some sentences.
   - It will need to be manually corrected to make it a good translation. However, this tool allows you to prototype and is more efficient than starting from scratch. Also, the CDATA tag has been removed from the translated text and must be added manually.
 - Parsing errors may occur when trying to translate manually created JSON files
   - In many cases, this is due to a specific comment in the JSON. Please delete the comments and try again.
