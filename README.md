@@ -1,7 +1,7 @@
 <h1 align="center">📖 nh-translation-helper</h1>
 
 <p align="center">
-A small CLI tool to help with multilingual support for the <a href="https://nh.outerwildsmods.com">New Horizons</a> based <a href="https://www.mobiusdigitalgames.com/outer-wilds.html">Outer Wilds</a> story mod.
+A small CLI tool to help with multi-language support for the <a href="https://nh.outerwildsmods.com">New Horizons</a> based <a href="https://www.mobiusdigitalgames.com/outer-wilds.html">Outer Wilds</a> story mod.
 </p>
 <p align="center">
   <a href="https://github.com/96-38/bitbank-trailing-stop/blob/master/LICENSE">
