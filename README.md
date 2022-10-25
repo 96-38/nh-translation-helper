@@ -8,6 +8,7 @@ A small CLI tool to help with multilingual support for the <a href="https://nh.o
     <img src="https://img.shields.io/badge/license-MIT-green.svg" />
     <a href="https://badge.fury.io/js/nh-translation-helper"><img src="https://badge.fury.io/js/nh-translation-helper.svg" alt="npm version" height="18"></a>
   </a>
+  <img src="https://user-images.githubusercontent.com/48713768/197670224-f408a47d-3781-48ea-acd4-8d8c57a7d66b.png"/>
 </p>
 
 ## Requirements
