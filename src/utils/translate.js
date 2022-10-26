@@ -24,8 +24,12 @@ const translate = async ({
   const spinner = ora("Translating...").start();
   //initialize language name
   const langList = require("./langList");
-  const targetLangName = langList.find((v) => v.code === targetLangCode).name;
-  const sourceLangName = langList.find((v) => v.code === sourceLangCode).name;
+  const targetLangName = langList
+    .find((v) => v.code === targetLangCode)
+    .name.toLowerCase();
+  const sourceLangName = langList
+    .find((v) => v.code === sourceLangCode)
+    .name.toLowerCase();
 
   //read json from file
   if (
@@ -100,7 +104,7 @@ const translate = async ({
   );
 
   // translate text array
-  const translate = async (targetTextArray, targetLangCode) =>
+  const translateText = async (targetTextArray, targetLangCode) =>
     await translator.translateText(targetTextArray, null, targetLangCode);
 
   const genTranslatedTextArray = async (targetTextArray) => {
@@ -113,7 +117,7 @@ const translate = async ({
     }
     try {
       if (!targetTextArray.length) return null;
-      return [...(await translate(targetTextArray, targetLangCode))].map(
+      return [...(await translateText(targetTextArray, targetLangCode))].map(
         (v) => v.text
       );
     } catch (error) {
