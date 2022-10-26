@@ -52,7 +52,7 @@ $ npm i -g nh-translation-helper
 $ nh-translation-helper
 ```
 
-When you run for the first time, please set the API KEY.
+When you start translation for the first time, please set the API KEY.
 
 ## Note
 
