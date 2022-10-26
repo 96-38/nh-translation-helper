@@ -13,7 +13,7 @@ A small CLI tool to help with multi-language support for the <a href="https://nh
 
 ## Requirements
 
-- [Node.js >=12.0.0](https://nodejs.org/)
+- [Node.js >= 12.0.0](https://nodejs.org/)
 - [DeepL API Key (Free or Pro)](https://www.deepl.com/docs-api)
 
 ## Installation
