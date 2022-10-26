@@ -30,17 +30,17 @@ $ npm i -g nh-translation-helper
 
   - Generate a json file instantly for another language (DeepL API Key required)
   - Supported Languages (inter-translatable)
-    - english : en-US
-    - spanish_la : es
-    - german : de
-    - french : fr
-    - italian : it
-    - polish : pl
-    - portuguese_br : pt-BR
-    - japanese : ja
-    - russian : ru
-    - chinese_simple : zh
-    - turkish : tr
+    - English : en-US
+    - Spanish_la : es
+    - German : de
+    - French : fr
+    - Italian : it
+    - Polish : pl
+    - Portuguese_br : pt-BR
+    - Japanese : ja
+    - Russian : ru
+    - Chinese_simple : zh
+    - Turkish : tr
 
 - Easy to use
   - Interactive UI so you just answer questions
