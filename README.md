@@ -25,10 +25,11 @@ $ npm i -g nh-translation-helper
 ## Features
 
 - Generate english.json
-  - Extract the text (dialogue, ship logs, etc.) from XML files and generate a english.json
-- Translate JSON
+  - Extract the text (dialogue, ship logs, etc.) from XML files and generate a english.json.
+  - XML file name is inserted into the JSON as a comment, which is useful for translation work because you know which scene the text is from.
+- Translate JSON (DeepL API Key required)
 
-  - Generate a json file instantly for another language (DeepL API Key required)
+  - Generate a json file instantly for another language.
   - Supported Languages (inter-translatable)
     - English : en-US
     - Spanish_la : es
