@@ -60,7 +60,10 @@ const translate = async ({
         match.replaceAll('"', "##").replaceAll(":", "%%").replaceAll("\\", "&&")
     );
   const replaceComments = (jsonString) =>
-    jsonString.replaceAll(/ \/\/(.*)[\n\r\r\n]/gi, '"@$1":"@$1",\n');
+    jsonString.replaceAll(/ \/\/(.*)[\n\r\r\n]/gi, (match, p1) => {
+      const trimmed = p1.trim();
+      return `"@${trimmed}":"@${trimmed}",\n`;
+    });
 
   //parse string to json
   const parseJsonString = (jsonString) => {
