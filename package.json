@@ -1,6 +1,6 @@
 {
   "name": "nh-translation-helper",
-  "version": "0.1.3",
+  "version": "0.1.4",
   "description": "A small CLI tool to help with multilingual support for the New Horizons based Outer Wilds story mod.",
   "license": "MIT",
   "main": "index.js",
