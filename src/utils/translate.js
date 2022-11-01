@@ -1,19 +1,17 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const deepl = require("deepl-node");
-const inquirer = require("inquirer");
-const logSymbols = require("log-symbols");
 const ora = require("ora");
+const deepl = require("deepl-node");
+const logSymbols = require("log-symbols");
+const confirmFileOverwite = require("./confirmFileOverwrite");
 
-//remove CDATA tag
 const removeTag = (text) => {
   const startTag = /\<\!\[CDATA\[\<color=.+\>/g;
   const endTag = "</color>]]>";
   return text.replaceAll(endTag, "").replaceAll(startTag, "");
 };
 
-//translate json
 const translate = async ({
   projectRoot,
   sourceLangCode,
@@ -22,7 +20,7 @@ const translate = async ({
 }) => {
   const translator = new deepl.Translator(apiKey);
   const spinner = ora("Translating...").start();
-  //initialize language name
+
   const langList = require("./langList");
   const targetLangName = langList
     .find((v) => v.code === targetLangCode)
@@ -31,7 +29,6 @@ const translate = async ({
     .find((v) => v.code === sourceLangCode)
     .name.toLowerCase();
 
-  //read json from file
   if (
     !fs.existsSync(
       path.join(projectRoot, `translations/${sourceLangName}.json`)
@@ -52,11 +49,11 @@ const translate = async ({
     "utf-8"
   );
 
-  //replace comments
   const replaceSpecificChar = (jsonString) =>
     jsonString.replaceAll(
       / \/\/((?=.*)(?=.*[:"\\«»]).+)[\n\r\r\n]/gi,
       (match) =>
+        //Replace symbols that cause parsing errors
         match.replaceAll('"', "##").replaceAll(":", "%%").replaceAll("\\", "&&")
     );
   const replaceComments = (jsonString) =>
@@ -65,7 +62,6 @@ const translate = async ({
       return `"@${trimmed}":"@${trimmed}",\n`;
     });
 
-  //parse string to json
   const parseJsonString = (jsonString) => {
     try {
       return JSON.parse(replaceComments(replaceSpecificChar(jsonString)));
@@ -193,11 +189,11 @@ const translate = async ({
   const formattedTranslatedString = restoreSpecificChar(
     restoreComments(JSON.stringify(translated, null, 2))
   )
+    //adjust line break
     .replaceAll('",\n    //', '",\n\n    //')
     .replaceAll("},\n", "},\n\n");
 
   //export JSON file
-  //Confirm overwrite
   spinner.succeed("Translation completed");
   fs.writeFile(
     `${path.join(projectRoot, `translations/${targetLangName}.json`)}`,
@@ -205,40 +201,11 @@ const translate = async ({
     { flag: "wx" },
     (err) => {
       if (err) {
-        inquirer
-          .prompt([
-            {
-              type: "confirm",
-              name: "overwrite",
-              message: `${targetLangName}.json already exists. Overwrite?`,
-            },
-          ])
-          .then((answer) => {
-            if (!answer.overwrite) {
-              console.log(logSymbols.error, "Not overwritten");
-              return;
-            }
-            fs.writeFile(
-              `${path.join(
-                projectRoot,
-                `translations/${targetLangName}.json`
-              )}`,
-              formattedTranslatedString,
-              (err) => {
-                if (err) {
-                  console.log(err);
-                } else {
-                  console.log(
-                    logSymbols.success,
-                    `Overwritten successfully: ${path.join(
-                      projectRoot,
-                      `translations/${targetLangName}.json`
-                    )} `
-                  );
-                }
-              }
-            );
-          });
+        confirmFileOverwite({
+          projectRoot,
+          file: formattedTranslatedString,
+          langName: targetLangName,
+        });
       } else {
         console.log(
           logSymbols.success,
