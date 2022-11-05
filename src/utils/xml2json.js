@@ -7,14 +7,28 @@ const normalize = require("normalize-path");
 const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
-const parseXml = (filePath) => {
+const xml2json = ({ projectRoot }) => {
+  if (!fs.existsSync(path.join(projectRoot, "planets"))) {
+    console.log(logSymbols.error, "Path of the project root is invalid.");
+    return;
+  }
+
+  const fileList = glob
+    .sync(normalize(path.join(projectRoot, "planets/**/*.xml")))
+    .map((v) => normalize(v));
+
+  if (Array.isArray(fileList) && !fileList.length) {
+    console.log(logSymbols.error, "XML file not found");
+    process.exit(1);
+  }
+
   //CDATA Tags are removed in the process of converting XML to JSON
   const restoreCdataTag = (array) =>
     array
       .map((v) => v.replaceAll("<color", "<![CDATA[<color"))
       .map((v) => v.replaceAll("</color>", "</color>]]>"));
 
-  const parseTextDirToArr = (filePath) => {
+  const parseXmlTextDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const textArr = [
       ...new Set(
@@ -29,7 +43,7 @@ const parseXml = (filePath) => {
     return textArr;
   };
 
-  const parseDialogueDirToArr = (filePath) => {
+  const parseXmlDialogueDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const dialogueArr = [
       ...new Set(
@@ -57,7 +71,7 @@ const parseXml = (filePath) => {
     return dialogueArr;
   };
 
-  const parseShipLogsDirToArr = (filePath) => {
+  const parseXmlShipLogsDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const shipLogsArr = [
       ...new Set(
@@ -89,48 +103,22 @@ const parseXml = (filePath) => {
     return shipLogsArr;
   };
 
-  if (filePath.includes("/Dialogue/")) {
-    return parseDialogueDirToArr;
-  }
-  if (filePath.includes("/Text/")) {
-    return parseTextDirToArr;
-  }
-  if (filePath.includes("/ShipLogs/")) {
-    return parseShipLogsDirToArr;
-  }
-};
-
-const xml2json = ({ projectRoot }) => {
-  if (!fs.existsSync(path.join(projectRoot, "planets"))) {
-    console.log(logSymbols.error, "Path of the project root is invalid.");
-    return;
-  }
-
   const getFileName = (filePath) => path.basename(filePath);
   const allDialogueArr = [];
   const allShipLogsArr = [];
-  const fileList = glob
-    .sync(normalize(path.join(projectRoot, "planets/**/*.xml")))
-    .map((v) => normalize(v));
-
-  if (Array.isArray(fileList) && !fileList.length) {
-    console.log(logSymbols.error, "XML file not found");
-    process.exit(1);
-  }
 
   try {
     fileList.forEach((filePath) => {
       const fileName = getFileName(filePath);
-      const parseXmlToArr = parseXml(filePath);
       if (filePath.includes("/Dialogue/")) {
         allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlToArr(filePath));
+        allDialogueArr.push(parseXmlDialogueDirToArr(filePath));
       } else if (filePath.includes("/Text/")) {
         allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlToArr(filePath));
+        allDialogueArr.push(parseXmlTextDirToArr(filePath));
       } else if (filePath.includes("/ShipLogs/")) {
         allShipLogsArr.push(`//${fileName}@`);
-        allShipLogsArr.push(parseXmlToArr(filePath));
+        allShipLogsArr.push(parseXmlShipLogsDirToArr(filePath));
       }
     });
   } catch (error) {
