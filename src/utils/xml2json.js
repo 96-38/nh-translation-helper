@@ -14,6 +14,7 @@ const xml2json = ({ projectRoot }) => {
   }
 
   const fileList = glob
+    //normalize path for windows (glob only use forward-slashes)
     .sync(normalize(path.join(projectRoot, "planets/**/*.xml")))
     .map((v) => normalize(v));
 
@@ -107,6 +108,7 @@ const xml2json = ({ projectRoot }) => {
   const allDialogueArr = [];
   const allShipLogsArr = [];
 
+  //extract text from xml to array
   try {
     fileList.forEach((filePath) => {
       const fileName = getFileName(filePath);
@@ -126,7 +128,8 @@ const xml2json = ({ projectRoot }) => {
     process.exit(1);
   }
 
-  const convertArrToObj = (arr) =>
+  //convert array to obj
+  const arrToObj = (arr) =>
     arr.flat().reduce((prev, curr) => {
       return {
         ...prev,
@@ -134,9 +137,10 @@ const xml2json = ({ projectRoot }) => {
       };
     }, {});
 
-  const dialogueObj = convertArrToObj(allDialogueArr);
-  const shipLogsObj = convertArrToObj(allShipLogsArr);
+  const dialogueObj = arrToObj(allDialogueArr);
+  const shipLogsObj = arrToObj(allShipLogsArr);
 
+  //format json
   const formattedString = JSON.stringify(
     {
       $schema:
