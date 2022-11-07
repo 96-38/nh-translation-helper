@@ -27,7 +27,9 @@ const xml2json = ({ projectRoot }) => {
   const restoreCdataTag = (array) =>
     array
       .map((v) => v.replaceAll("<color", "<![CDATA[<color"))
-      .map((v) => v.replaceAll("</color>", "</color>]]>"));
+      .map((v) => v.replaceAll("</color>", "</color>]]>"))
+      .map((v) => v.replaceAll("<Color", "<![CDATA[<Color"))
+      .map((v) => v.replaceAll("</Color>", "</Color>]]>"));
 
   const parseXmlTextDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
@@ -112,15 +114,23 @@ const xml2json = ({ projectRoot }) => {
   try {
     fileList.forEach((filePath) => {
       const fileName = getFileName(filePath);
-      if (filePath.includes("/Dialogue/")) {
-        allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlDialogueDirToArr(filePath));
-      } else if (filePath.includes("/Text/")) {
-        allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlTextDirToArr(filePath));
-      } else if (filePath.includes("/ShipLogs/")) {
+      const xml = fs.readFileSync(filePath, "utf-8");
+      const xmlRootElement = Object.keys(
+        XML.parse(xml, {
+          preserveDocumentNode: true,
+          forceArrays: true,
+        })
+      )[0];
+
+      if (xmlRootElement === "AstroObjectEntry") {
         allShipLogsArr.push(`//${fileName}@`);
         allShipLogsArr.push(parseXmlShipLogsDirToArr(filePath));
+      } else if (xmlRootElement === "DialogueTree") {
+        allDialogueArr.push(`//${fileName}@`);
+        allDialogueArr.push(parseXmlDialogueDirToArr(filePath));
+      } else if (xmlRootElement === "NomaiObject") {
+        allDialogueArr.push(`//${fileName}@`);
+        allDialogueArr.push(parseXmlTextDirToArr(filePath));
       }
     });
   } catch (error) {
