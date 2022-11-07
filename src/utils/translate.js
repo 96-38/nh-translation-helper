@@ -7,9 +7,15 @@ const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
 const removeTag = (text) => {
-  const startTag = /\<\!\[CDATA\[\<color=.+\>/g;
-  const endTag = "</color>]]>";
-  return text.replaceAll(endTag, "").replaceAll(startTag, "");
+  const startTagL = /\<\!\[CDATA\[\<color=.+\>/g;
+  const endTagL = "</color>]]>";
+  const startTagU = /\<\!\[CDATA\[\<Color=.+\>/g;
+  const endTagU = "</Color>]]>";
+  return text
+    .replaceAll(endTagL, "")
+    .replaceAll(startTagL, "")
+    .replaceAll(endTagU, "")
+    .replaceAll(startTagU, "");
 };
 
 const translate = async ({
