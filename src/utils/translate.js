@@ -7,15 +7,25 @@ const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
 const removeTag = (text) => {
-  const startTagL = /\<\!\[CDATA\[\<color=.+\>/g;
-  const endTagL = "</color>]]>";
-  const startTagU = /\<\!\[CDATA\[\<Color=.+\>/g;
-  const endTagU = "</Color>]]>";
+  const closingTagWithCdataTagL = "<![CDATA[</color>]]>";
+  const closingTagWithCdataTagU = "<![CDATA[</Color>]]>";
+  const openingTagWithCdataTagL = /\<\!\[CDATA\[\<color=[a-z#0-9]+\>\]\]\>/g;
+  const openingTagWithCdataTagU = /\<\!\[CDATA\[\<Color=[a-z#0-9]+\>\]\]\>/g;
+
+  const closingTagL = "</color>]]>";
+  const closingTagU = "</Color>]]>";
+  const openingTagL = /\<\!\[CDATA\[\<color=[a-z#0-9]+\>/g;
+  const openingTagU = /\<\!\[CDATA\[\<Color=[a-z#0-9]+\>/g;
+
   return text
-    .replaceAll(endTagL, "")
-    .replaceAll(startTagL, "")
-    .replaceAll(endTagU, "")
-    .replaceAll(startTagU, "");
+    .replaceAll(closingTagWithCdataTagL, "")
+    .replaceAll(closingTagWithCdataTagU, "")
+    .replaceAll(openingTagWithCdataTagL, "")
+    .replaceAll(openingTagWithCdataTagU, "")
+    .replaceAll(closingTagL, "")
+    .replaceAll(closingTagU, "")
+    .replaceAll(openingTagL, "")
+    .replaceAll(openingTagU, "");
 };
 
 const translate = async ({
