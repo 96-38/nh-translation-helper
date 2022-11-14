@@ -25,7 +25,7 @@
     "log-symbols": "^4.1.0",
     "normalize-path": "^3.0.0",
     "ora": "^5.4.1",
-    "pixl-xml": "^1.0.13"
+    "xml2json": "git+https://github.com/96-38/node-xml2json"
   },
   "devDependencies": {
     "ls-engines": "^0.7.0"
