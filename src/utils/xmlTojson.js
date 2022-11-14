@@ -1,13 +1,13 @@
 "use strict";
 const fs = require("fs");
 const path = require("path");
-const XML = require("pixl-xml");
+const parser = require("xml2json");
 const glob = require("glob");
 const normalize = require("normalize-path");
 const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
-const xml2json = ({ projectRoot }) => {
+const xmlTojson = ({ projectRoot }) => {
   if (!fs.existsSync(path.join(projectRoot, "planets"))) {
     console.log(logSymbols.error, "Path of the project root is invalid.");
     return;
@@ -23,24 +23,19 @@ const xml2json = ({ projectRoot }) => {
     process.exit(1);
   }
 
-  //CDATA Tags are removed in the process of converting XML to JSON
-  const restoreCdataTag = (array) =>
-    array
-      .map((v) => v.replaceAll("<color", "<![CDATA[<color"))
-      .map((v) => v.replaceAll("</color>", "</color>]]>"))
-      .map((v) => v.replaceAll("<Color", "<![CDATA[<Color"))
-      .map((v) => v.replaceAll("</Color>", "</Color>]]>"));
+  const parseOptions = {
+    object: true,
+    arrayNotation: true,
+    preserveCdataTag: true,
+  };
 
   const parseXmlTextDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const textArr = [
       ...new Set(
-        restoreCdataTag(
-          XML.parse(xml, {
-            preserveDocumentNode: true,
-            forceArrays: true,
-          }).NomaiObject.TextBlock.flatMap((v) => v.Text)
-        )
+        parser
+          .toJson(xml, parseOptions)
+          .NomaiObject[0].TextBlock.flatMap((v) => v.Text)
       ),
     ];
     return textArr;
@@ -50,22 +45,18 @@ const xml2json = ({ projectRoot }) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const dialogueArr = [
       ...new Set(
-        XML.parse(xml, {
-          preserveDocumentNode: true,
-          forceArrays: true,
-        })
-          .DialogueTree.DialogueNode.flatMap((v) =>
+        parser
+          .toJson(xml, parseOptions)
+          .DialogueTree[0].DialogueNode.flatMap((v) =>
             v.DialogueOptionsList
               ? [
-                  restoreCdataTag(v.Dialogue.flatMap((v) => v.Page)),
-                  restoreCdataTag(
-                    v.DialogueOptionsList.flatMap((v) =>
-                      v.DialogueOption.flatMap((v) => v.Text)
-                    )
+                  v.Dialogue.flatMap((v) => v.Page),
+                  v.DialogueOptionsList.flatMap((v) =>
+                    v.DialogueOption.flatMap((v) => v.Text)
                   ),
                 ]
               : v.Dialogue
-              ? restoreCdataTag(v.Dialogue.flatMap((v) => v.Page))
+              ? v.Dialogue.flatMap((v) => v.Page)
               : ""
           )
           .flat(Infinity)
@@ -78,26 +69,20 @@ const xml2json = ({ projectRoot }) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const shipLogsArr = [
       ...new Set(
-        XML.parse(xml, {
-          preserveDocumentNode: true,
-          forceArrays: true,
-        })
-          .AstroObjectEntry.Entry.flatMap((v) =>
+        parser
+          .toJson(xml, parseOptions)
+          .AstroObjectEntry[0].Entry.flatMap((v) =>
             v.RumorFact && v.ExploreFact
               ? [
                   v.Name,
-                  restoreCdataTag(
-                    v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat()
-                  ),
-                  restoreCdataTag(v.ExploreFact.flatMap((v) => v.Text)),
+                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
+                  v.ExploreFact.flatMap((v) => v.Text),
                 ]
               : v.ExploreFact
-              ? [v.Name, restoreCdataTag(v.ExploreFact.flatMap((v) => v.Text))]
+              ? [v.Name, v.ExploreFact.flatMap((v) => v.Text)]
               : [
                   v.Name,
-                  restoreCdataTag(
-                    v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat()
-                  ),
+                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
                 ]
           )
           .flat(Infinity)
@@ -113,15 +98,10 @@ const xml2json = ({ projectRoot }) => {
   //extract text from xml to array
   try {
     fileList.forEach((filePath) => {
-      const fileName = getFileName(filePath);
       const xml = fs.readFileSync(filePath, "utf-8");
-      const xmlRootElement = Object.keys(
-        XML.parse(xml, {
-          preserveDocumentNode: true,
-          forceArrays: true,
-        })
-      )[0];
+      const xmlRootElement = Object.keys(parser.toJson(xml, parseOptions))[0];
 
+      const fileName = getFileName(filePath);
       if (xmlRootElement === "AstroObjectEntry") {
         allShipLogsArr.push(`//${fileName}@`);
         allShipLogsArr.push(parseXmlShipLogsDirToArr(filePath));
@@ -138,6 +118,17 @@ const xml2json = ({ projectRoot }) => {
     process.exit(1);
   }
 
+  //convert line break to Windows style
+  const convertLineBreak = (arr) =>
+    arr.map((vs) =>
+      Array.isArray(vs)
+        ? vs.map((v) => v.replaceAll("\n", "\r\n"))
+        : vs.replaceAll("\n", "\r\n")
+    );
+
+  const convertedAllDialogueArr = convertLineBreak(allDialogueArr);
+  const convertedAllShipLogsArr = convertLineBreak(allShipLogsArr);
+
   //convert array to obj
   const arrToObj = (arr) =>
     arr.flat().reduce((prev, curr) => {
@@ -147,8 +138,8 @@ const xml2json = ({ projectRoot }) => {
       };
     }, {});
 
-  const dialogueObj = arrToObj(allDialogueArr);
-  const shipLogsObj = arrToObj(allShipLogsArr);
+  const dialogueObj = arrToObj(convertedAllDialogueArr);
+  const shipLogsObj = arrToObj(convertedAllShipLogsArr);
 
   //format json
   const formattedString = JSON.stringify(
@@ -170,9 +161,7 @@ const xml2json = ({ projectRoot }) => {
     .replaceAll("},\n", "},\n\n")
     //restore comment
     .replaceAll('"//', "//")
-    .replaceAll(/.xml@.+/g, "")
-    //remove white space after closing tag
-    .replaceAll(/<\/color>]]> ([.,!?])/g, "</color>]]>$1");
+    .replaceAll(/.xml@.+/g, "");
 
   const exportJSON = () => {
     fs.mkdir(path.join(projectRoot, "translations"), (err) => {
@@ -205,4 +194,4 @@ const xml2json = ({ projectRoot }) => {
   exportJSON();
 };
 
-module.exports = xml2json;
+module.exports = xmlTojson;

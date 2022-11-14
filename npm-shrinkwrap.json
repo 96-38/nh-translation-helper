@@ -1,12 +1,12 @@
 {
   "name": "nh-translation-helper",
-  "version": "0.1.2",
+  "version": "0.1.6",
   "lockfileVersion": 2,
   "requires": true,
   "packages": {
     "": {
       "name": "nh-translation-helper",
-      "version": "0.1.2",
+      "version": "0.1.6",
       "license": "MIT",
       "dependencies": {
         "conf": "^10.2.0",
@@ -16,7 +16,7 @@
         "log-symbols": "^4.1.0",
         "normalize-path": "^3.0.0",
         "ora": "^5.4.1",
-        "pixl-xml": "^1.0.13"
+        "xml2json": "git+https://github.com/96-38/node-xml2json"
       },
       "bin": {
         "nh-translation-helper": "src/index.js"
@@ -541,6 +541,14 @@
       "dev": true,
       "engines": {
         "node": "^12.13.0 || ^14.15.0 || >=16.0.0"
+      }
+    },
+    "node_modules/bindings": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/bindings/-/bindings-1.5.0.tgz",
+      "integrity": "sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==",
+      "dependencies": {
+        "file-uri-to-path": "1.0.0"
       }
     },
     "node_modules/bl": {
@@ -1166,6 +1174,11 @@
         "url": "https://github.com/sponsors/sindresorhus"
       }
     },
+    "node_modules/file-uri-to-path": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz",
+      "integrity": "sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw=="
+    },
     "node_modules/find-up": {
       "version": "3.0.0",
       "resolved": "https://registry.npmjs.org/find-up/-/find-up-3.0.0.tgz",
@@ -1787,6 +1800,15 @@
       "integrity": "sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==",
       "dev": true
     },
+    "node_modules/hoek": {
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/hoek/-/hoek-4.2.1.tgz",
+      "integrity": "sha512-QLg82fGkfnJ/4iy1xZ81/9SIJiq1NGFUMGs6ParyjBZr6jW2Ufj/snDqTHixNlHdPNwN2RLVD0Pi3igeK9+JfA==",
+      "deprecated": "This version has been deprecated in accordance with the hapi support policy (hapi.im/support). Please upgrade to the latest version to get the best features, bug fixes, and security patches. If you are unable to upgrade at this time, paid support is available for older versions (hapi.im/commercial).",
+      "engines": {
+        "node": ">=4.0.0"
+      }
+    },
     "node_modules/hosted-git-info": {
       "version": "5.1.0",
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-5.1.0.tgz",
@@ -2235,6 +2257,17 @@
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==",
       "dev": true
     },
+    "node_modules/isemail": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/isemail/-/isemail-3.2.0.tgz",
+      "integrity": "sha512-zKqkK+O+dGqevc93KNsbZ/TqTUFd46MwWjYOoMrjIMZ51eU7DtQG3Wmd9SQQT7i7RVnuTPEiYEWHU3MSbxC1Tg==",
+      "dependencies": {
+        "punycode": "2.x.x"
+      },
+      "engines": {
+        "node": ">=4.0.0"
+      }
+    },
     "node_modules/isexe": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
@@ -2261,6 +2294,29 @@
       },
       "funding": {
         "url": "https://github.com/sponsors/ljharb"
+      }
+    },
+    "node_modules/joi": {
+      "version": "13.7.0",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-13.7.0.tgz",
+      "integrity": "sha512-xuY5VkHfeOYK3Hdi91ulocfuFopwgbSORmIwzcwHKESQhC7w1kD5jaVSPnqDxS2I8t3RZ9omCKAxNwXN5zG1/Q==",
+      "deprecated": "This version has been deprecated in accordance with the hapi support policy (hapi.im/support). Please upgrade to the latest version to get the best features, bug fixes, and security patches. If you are unable to upgrade at this time, paid support is available for older versions (hapi.im/commercial).",
+      "dependencies": {
+        "hoek": "5.x.x",
+        "isemail": "3.x.x",
+        "topo": "3.x.x"
+      },
+      "engines": {
+        "node": ">=8.9.0"
+      }
+    },
+    "node_modules/joi/node_modules/hoek": {
+      "version": "5.0.4",
+      "resolved": "https://registry.npmjs.org/hoek/-/hoek-5.0.4.tgz",
+      "integrity": "sha512-Alr4ZQgoMlnere5FZJsIyfIjORBqZll5POhDsF4q64dPuJR6rNxXdDxtHSQq8OXRurhmx+PWYEE8bXRROY8h0w==",
+      "deprecated": "This version has been deprecated in accordance with the hapi support policy (hapi.im/support). Please upgrade to the latest version to get the best features, bug fixes, and security patches. If you are unable to upgrade at this time, paid support is available for older versions (hapi.im/commercial).",
+      "engines": {
+        "node": ">=8.9.0"
       }
     },
     "node_modules/json-file-plus": {
@@ -2647,6 +2703,11 @@
       "resolved": "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz",
       "integrity": "sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA=="
     },
+    "node_modules/nan": {
+      "version": "2.17.0",
+      "resolved": "https://registry.npmjs.org/nan/-/nan-2.17.0.tgz",
+      "integrity": "sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ=="
+    },
     "node_modules/negotiator": {
       "version": "0.6.3",
       "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz",
@@ -2654,6 +2715,16 @@
       "dev": true,
       "engines": {
         "node": ">= 0.6"
+      }
+    },
+    "node_modules/node-expat": {
+      "version": "2.4.0",
+      "resolved": "https://registry.npmjs.org/node-expat/-/node-expat-2.4.0.tgz",
+      "integrity": "sha512-X8Y/Zk/izfNgfayeOeUGqze7KlaOwVJ9SDTjHUMKd0hu0aFTRpLlLCBwmx79cTPiQWD24I1YOafF+U+rTvEMfQ==",
+      "hasInstallScript": true,
+      "dependencies": {
+        "bindings": "^1.5.0",
+        "nan": "^2.13.2"
       }
     },
     "node_modules/node-gyp": {
@@ -3152,11 +3223,6 @@
       "resolved": "https://registry.npmjs.org/phin/-/phin-2.9.3.tgz",
       "integrity": "sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA==",
       "dev": true
-    },
-    "node_modules/pixl-xml": {
-      "version": "1.0.13",
-      "resolved": "https://registry.npmjs.org/pixl-xml/-/pixl-xml-1.0.13.tgz",
-      "integrity": "sha512-TFFCqJKL6k3S284To1t8MQfqgiHIDXoLvOmuUm8XMIUotlRc2EIibx6fuKDDb5+0fN1o2tkTe1vRWVNk/HJqHQ=="
     },
     "node_modules/pkg-up": {
       "version": "3.1.0",
@@ -3796,6 +3862,21 @@
         "node": ">=0.6.0"
       }
     },
+    "node_modules/topo": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/topo/-/topo-3.0.3.tgz",
+      "integrity": "sha512-IgpPtvD4kjrJ7CRA3ov2FhWQADwv+Tdqbsf1ZnPUSAtCJ9e1Z44MmoSGDXGk4IppoZA7jd/QRkNddlLJWlUZsQ==",
+      "deprecated": "This module has moved and is now available at @hapi/topo. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues.",
+      "dependencies": {
+        "hoek": "6.x.x"
+      }
+    },
+    "node_modules/topo/node_modules/hoek": {
+      "version": "6.1.3",
+      "resolved": "https://registry.npmjs.org/hoek/-/hoek-6.1.3.tgz",
+      "integrity": "sha512-YXXAAhmF9zpQbC7LEcREFtXfGq5K1fmd+4PHkBq8NUqmzW3G+Dq10bI/i0KucLRwss3YYFQ0fSfoxBZYiGUqtQ==",
+      "deprecated": "This module has moved and is now available at @hapi/hoek. Please update your dependencies as this version is no longer maintained an may contain bugs and security issues."
+    },
     "node_modules/treeverse": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/treeverse/-/treeverse-2.0.0.tgz",
@@ -3981,6 +4062,19 @@
       },
       "engines": {
         "node": "^12.13.0 || ^14.15.0 || >=16.0.0"
+      }
+    },
+    "node_modules/xml2json": {
+      "version": "0.11.3",
+      "resolved": "git+ssh://git@github.com/96-38/node-xml2json.git#38da00f813518b0d740bb66f2f569a1701aec223",
+      "license": "MIT",
+      "dependencies": {
+        "hoek": "^4.2.1",
+        "joi": "^13.1.2",
+        "node-expat": "^2.3.18"
+      },
+      "bin": {
+        "xml2json": "bin/xml2json"
       }
     },
     "node_modules/y18n": {
@@ -4417,6 +4511,14 @@
           "integrity": "sha512-awzfKUO7v0FscrSpRoogyNm0sajikhBWpU0QMrW09AMi9n1PoKU6WaIqUzuJSQnpciZZmJ/jMZ2Egfmb/9LiWQ==",
           "dev": true
         }
+      }
+    },
+    "bindings": {
+      "version": "1.5.0",
+      "resolved": "https://registry.npmjs.org/bindings/-/bindings-1.5.0.tgz",
+      "integrity": "sha512-p2q/t/mhvuOj/UeLlV6566GD/guowlr0hHxClI0W9m7MWYkL1F0hLo+0Aexs9HSPCtR1SXQ0TD3MMKrXZajbiQ==",
+      "requires": {
+        "file-uri-to-path": "1.0.0"
       }
     },
     "bl": {
@@ -4887,6 +4989,11 @@
       "requires": {
         "escape-string-regexp": "^1.0.5"
       }
+    },
+    "file-uri-to-path": {
+      "version": "1.0.0",
+      "resolved": "https://registry.npmjs.org/file-uri-to-path/-/file-uri-to-path-1.0.0.tgz",
+      "integrity": "sha512-0Zt+s3L7Vf1biwWZ29aARiVYLx7iMGnEUl9x33fbB/j3jR81u/O2LbqK+Bm1CDSNDKVtJ/YjwY7TUd5SkeLQLw=="
     },
     "find-up": {
       "version": "3.0.0",
@@ -5368,6 +5475,11 @@
       "integrity": "sha512-8Rf9Y83NBReMnx0gFzA8JImQACstCYWUplepDa9xprwwtmgEZUF0h/i5xSA625zB/I37EtrswSST6OXxwaaIJQ==",
       "dev": true
     },
+    "hoek": {
+      "version": "4.2.1",
+      "resolved": "https://registry.npmjs.org/hoek/-/hoek-4.2.1.tgz",
+      "integrity": "sha512-QLg82fGkfnJ/4iy1xZ81/9SIJiq1NGFUMGs6ParyjBZr6jW2Ufj/snDqTHixNlHdPNwN2RLVD0Pi3igeK9+JfA=="
+    },
     "hosted-git-info": {
       "version": "5.1.0",
       "resolved": "https://registry.npmjs.org/hosted-git-info/-/hosted-git-info-5.1.0.tgz",
@@ -5684,6 +5796,14 @@
       "integrity": "sha512-xHjhDr3cNBK0BzdUJSPXZntQUx/mwMS5Rw4A7lPJ90XGAO6ISP/ePDNuo0vhqOZU+UD5JoodwCAAoZQd3FeAKw==",
       "dev": true
     },
+    "isemail": {
+      "version": "3.2.0",
+      "resolved": "https://registry.npmjs.org/isemail/-/isemail-3.2.0.tgz",
+      "integrity": "sha512-zKqkK+O+dGqevc93KNsbZ/TqTUFd46MwWjYOoMrjIMZ51eU7DtQG3Wmd9SQQT7i7RVnuTPEiYEWHU3MSbxC1Tg==",
+      "requires": {
+        "punycode": "2.x.x"
+      }
+    },
     "isexe": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/isexe/-/isexe-2.0.0.tgz",
@@ -5704,6 +5824,23 @@
       "requires": {
         "es-get-iterator": "^1.0.2",
         "iterate-iterator": "^1.0.1"
+      }
+    },
+    "joi": {
+      "version": "13.7.0",
+      "resolved": "https://registry.npmjs.org/joi/-/joi-13.7.0.tgz",
+      "integrity": "sha512-xuY5VkHfeOYK3Hdi91ulocfuFopwgbSORmIwzcwHKESQhC7w1kD5jaVSPnqDxS2I8t3RZ9omCKAxNwXN5zG1/Q==",
+      "requires": {
+        "hoek": "5.x.x",
+        "isemail": "3.x.x",
+        "topo": "3.x.x"
+      },
+      "dependencies": {
+        "hoek": {
+          "version": "5.0.4",
+          "resolved": "https://registry.npmjs.org/hoek/-/hoek-5.0.4.tgz",
+          "integrity": "sha512-Alr4ZQgoMlnere5FZJsIyfIjORBqZll5POhDsF4q64dPuJR6rNxXdDxtHSQq8OXRurhmx+PWYEE8bXRROY8h0w=="
+        }
       }
     },
     "json-file-plus": {
@@ -6004,11 +6141,25 @@
       "resolved": "https://registry.npmjs.org/mute-stream/-/mute-stream-0.0.8.tgz",
       "integrity": "sha512-nnbWWOkoWyUsTjKrhgD0dcz22mdkSnpYqbEjIm2nhwhuxlSkpywJmBo8h0ZqJdkp73mb90SssHkN4rsRaBAfAA=="
     },
+    "nan": {
+      "version": "2.17.0",
+      "resolved": "https://registry.npmjs.org/nan/-/nan-2.17.0.tgz",
+      "integrity": "sha512-2ZTgtl0nJsO0KQCjEpxcIr5D+Yv90plTitZt9JBfQvVJDS5seMl3FOvsh3+9CoYWXf/1l5OaZzzF6nDm4cagaQ=="
+    },
     "negotiator": {
       "version": "0.6.3",
       "resolved": "https://registry.npmjs.org/negotiator/-/negotiator-0.6.3.tgz",
       "integrity": "sha512-+EUsqGPLsM+j/zdChZjsnX51g4XrHFOIXwfnCVPGlQk/k5giakcKsuxCObBRu6DSm9opw/O6slWbJdghQM4bBg==",
       "dev": true
+    },
+    "node-expat": {
+      "version": "2.4.0",
+      "resolved": "https://registry.npmjs.org/node-expat/-/node-expat-2.4.0.tgz",
+      "integrity": "sha512-X8Y/Zk/izfNgfayeOeUGqze7KlaOwVJ9SDTjHUMKd0hu0aFTRpLlLCBwmx79cTPiQWD24I1YOafF+U+rTvEMfQ==",
+      "requires": {
+        "bindings": "^1.5.0",
+        "nan": "^2.13.2"
+      }
     },
     "node-gyp": {
       "version": "9.3.0",
@@ -6380,11 +6531,6 @@
       "resolved": "https://registry.npmjs.org/phin/-/phin-2.9.3.tgz",
       "integrity": "sha512-CzFr90qM24ju5f88quFC/6qohjC144rehe5n6DH900lgXmUe86+xCKc10ev56gRKC4/BkHUoG4uSiQgBiIXwDA==",
       "dev": true
-    },
-    "pixl-xml": {
-      "version": "1.0.13",
-      "resolved": "https://registry.npmjs.org/pixl-xml/-/pixl-xml-1.0.13.tgz",
-      "integrity": "sha512-TFFCqJKL6k3S284To1t8MQfqgiHIDXoLvOmuUm8XMIUotlRc2EIibx6fuKDDb5+0fN1o2tkTe1vRWVNk/HJqHQ=="
     },
     "pkg-up": {
       "version": "3.1.0",
@@ -6868,6 +7014,21 @@
         "os-tmpdir": "~1.0.2"
       }
     },
+    "topo": {
+      "version": "3.0.3",
+      "resolved": "https://registry.npmjs.org/topo/-/topo-3.0.3.tgz",
+      "integrity": "sha512-IgpPtvD4kjrJ7CRA3ov2FhWQADwv+Tdqbsf1ZnPUSAtCJ9e1Z44MmoSGDXGk4IppoZA7jd/QRkNddlLJWlUZsQ==",
+      "requires": {
+        "hoek": "6.x.x"
+      },
+      "dependencies": {
+        "hoek": {
+          "version": "6.1.3",
+          "resolved": "https://registry.npmjs.org/hoek/-/hoek-6.1.3.tgz",
+          "integrity": "sha512-YXXAAhmF9zpQbC7LEcREFtXfGq5K1fmd+4PHkBq8NUqmzW3G+Dq10bI/i0KucLRwss3YYFQ0fSfoxBZYiGUqtQ=="
+        }
+      }
+    },
     "treeverse": {
       "version": "2.0.0",
       "resolved": "https://registry.npmjs.org/treeverse/-/treeverse-2.0.0.tgz",
@@ -7014,6 +7175,15 @@
       "requires": {
         "imurmurhash": "^0.1.4",
         "signal-exit": "^3.0.7"
+      }
+    },
+    "xml2json": {
+      "version": "git+ssh://git@github.com/96-38/node-xml2json.git#38da00f813518b0d740bb66f2f569a1701aec223",
+      "from": "xml2json@git+https://github.com/96-38/node-xml2json",
+      "requires": {
+        "hoek": "^4.2.1",
+        "joi": "^13.1.2",
+        "node-expat": "^2.3.18"
       }
     },
     "y18n": {

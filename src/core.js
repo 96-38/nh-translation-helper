@@ -2,7 +2,7 @@
 const inquirer = require("inquirer");
 const logSymbols = require("log-symbols");
 const langList = require("./utils/langList");
-const xml2json = require("./utils/xml2json");
+const xmlTojson = require("./utils/xmlTojson");
 const translate = require("./utils/translate");
 const setupApiKey = require("./utils/setupApiKey");
 const deleteApiKey = require("./utils/deleteApiKey");
@@ -61,7 +61,7 @@ const run = ({ apiKey, isValid = false }) => {
     .then(async (answer) => {
       //XML to JSON
       if (answer.process.includes("XML")) {
-        xml2json({ projectRoot: answer.projectRoot.trim() });
+        xmlTojson({ projectRoot: answer.projectRoot.trim() });
         //Translate JSON
       } else if (answer.process.includes("Translate")) {
         if (isValid === false) {
