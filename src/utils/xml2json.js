@@ -24,14 +24,29 @@ const xml2json = ({ projectRoot }) => {
   }
 
   //CDATA Tags are removed in the process of converting XML to JSON
-  const restoreCdataTag = (array) =>
-    array
-      .map((v) => v.replaceAll("<color", "<![CDATA[<color"))
-      .map((v) => v.replaceAll("</color>", "</color>]]>"))
-      .map((v) => v.replaceAll("<Color", "<![CDATA[<Color"))
-      .map((v) => v.replaceAll("</Color>", "</Color>]]>"));
+  const restoreCdataTag = (textArr) =>
+    textArr
+      .map((text) => text.replaceAll("<color", "<![CDATA[<color"))
+      .map((text) => text.replaceAll("</color>", "</color>]]>"))
+      .map((text) => text.replaceAll("<Color", "<![CDATA[<Color"))
+      .map((text) => text.replaceAll("</Color>", "</Color>]]>"));
 
-  const parseXmlTextDirToArr = (filePath) => {
+  const restoreCdataTagWithClosingTag = (textArr) =>
+    textArr
+      .map((text) =>
+        text.replaceAll(/<color=([a-z#0-9]+)>/g, "<![CDATA[<color=$1>]]>")
+      )
+      .map((text) =>
+        text.replaceAll(/<Color=([a-z#0-9]+)>/g, "<![CDATA[<Color=$1>]]>")
+      )
+      .map((text) => text.replaceAll("</color>", "<![CDATA[</color>]]>"))
+      .map((text) => text.replaceAll("</Color>", "<![CDATA[</Color>]]>"))
+      //remove spaces before and after text enclosed in tags
+      .map((text) =>
+        text.replaceAll(/=([a-z#0-9]+)>]]> ([^>]+) <!/g, "=$1>]]>$2<!")
+      );
+
+  const parseXmlTextDirToArr = (filePath, restoreCdataTag) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const textArr = [
       ...new Set(
@@ -46,7 +61,7 @@ const xml2json = ({ projectRoot }) => {
     return textArr;
   };
 
-  const parseXmlDialogueDirToArr = (filePath) => {
+  const parseXmlDialogueDirToArr = (filePath, restoreCdataTag) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const dialogueArr = [
       ...new Set(
@@ -74,7 +89,7 @@ const xml2json = ({ projectRoot }) => {
     return dialogueArr;
   };
 
-  const parseXmlShipLogsDirToArr = (filePath) => {
+  const parseXmlShipLogsDirToArr = (filePath, restoreCdataTag) => {
     const xml = fs.readFileSync(filePath, "utf-8");
     const shipLogsArr = [
       ...new Set(
@@ -107,14 +122,29 @@ const xml2json = ({ projectRoot }) => {
   };
 
   const getFileName = (filePath) => path.basename(filePath);
+  const xmlToArray = (filePath, xmlRootElement, restoreCdataTag) => {
+    const fileName = getFileName(filePath);
+    if (xmlRootElement === "AstroObjectEntry") {
+      allShipLogsArr.push(`//${fileName}@`);
+      allShipLogsArr.push(parseXmlShipLogsDirToArr(filePath, restoreCdataTag));
+    } else if (xmlRootElement === "DialogueTree") {
+      allDialogueArr.push(`//${fileName}@`);
+      allDialogueArr.push(parseXmlDialogueDirToArr(filePath, restoreCdataTag));
+    } else if (xmlRootElement === "NomaiObject") {
+      allDialogueArr.push(`//${fileName}@`);
+      allDialogueArr.push(parseXmlTextDirToArr(filePath, restoreCdataTag));
+    }
+  };
   const allDialogueArr = [];
   const allShipLogsArr = [];
 
   //extract text from xml to array
   try {
     fileList.forEach((filePath) => {
-      const fileName = getFileName(filePath);
       const xml = fs.readFileSync(filePath, "utf-8");
+      const hasCdataTagWithClosingTag =
+        xml.includes("<![CDATA[</Color>]]>") ||
+        xml.includes("<![CDATA[</color>]]>");
       const xmlRootElement = Object.keys(
         XML.parse(xml, {
           preserveDocumentNode: true,
@@ -122,15 +152,10 @@ const xml2json = ({ projectRoot }) => {
         })
       )[0];
 
-      if (xmlRootElement === "AstroObjectEntry") {
-        allShipLogsArr.push(`//${fileName}@`);
-        allShipLogsArr.push(parseXmlShipLogsDirToArr(filePath));
-      } else if (xmlRootElement === "DialogueTree") {
-        allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlDialogueDirToArr(filePath));
-      } else if (xmlRootElement === "NomaiObject") {
-        allDialogueArr.push(`//${fileName}@`);
-        allDialogueArr.push(parseXmlTextDirToArr(filePath));
+      if (hasCdataTagWithClosingTag) {
+        xmlToArray(filePath, xmlRootElement, restoreCdataTagWithClosingTag);
+      } else {
+        xmlToArray(filePath, xmlRootElement, restoreCdataTag);
       }
     });
   } catch (error) {
@@ -172,7 +197,8 @@ const xml2json = ({ projectRoot }) => {
     .replaceAll('"//', "//")
     .replaceAll(/.xml@.+/g, "")
     //remove white space after closing tag
-    .replaceAll(/<\/color>]]> ([.,!?])/g, "</color>]]>$1");
+    .replaceAll(/<\/color>]]> ([.,!?])/g, "</color>]]>$1")
+    .replaceAll(/<\/Color>]]> ([.,!?])/g, "</Color>]]>$1");
 
   const exportJSON = () => {
     fs.mkdir(path.join(projectRoot, "translations"), (err) => {
