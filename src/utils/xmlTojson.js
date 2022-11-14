@@ -118,6 +118,17 @@ const xml2json = ({ projectRoot }) => {
           .flat(Infinity)
       ),
     ];
+    const shipLogsArrTemp = [
+      ...new Set(
+        XML.parse(xml, {
+          preserveDocumentNode: true,
+          forceArrays: true,
+        }).AstroObjectEntry.Entry
+      ),
+    ];
+
+    console.log(shipLogsArrTemp);
+    process.exit(1);
     return shipLogsArr;
   };
 
