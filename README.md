@@ -22,6 +22,8 @@ When installing Node.js, be sure to install "Tools for Native Modules".<br>Make 
 
 <img width="385" alt="Node.js Install Wizard" src="https://user-images.githubusercontent.com/48713768/201834606-2261caa3-e8df-48b2-bbfc-1f306423c670.png">
 
+**Note**: Make sure you have enough free space (about 7 GB) before installing Node.js.
+
 ## Installation
 
 ```bash
