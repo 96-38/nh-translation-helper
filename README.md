@@ -16,16 +16,26 @@ A small CLI tool to help with multi-language support for the <a href="https://nh
 - [Node.js >= 12.0.0](https://nodejs.org/)
 - [DeepL API Key (Free or Pro)](https://www.deepl.com/docs-api)
 
+### For Windows Users
+
+When installing Node.js, be sure to install "Tools for Native Modules".<br>Make sure the following checkbox in the installation wizard is checked.
+
+<img width="385" alt="Node.js Install Wizard" src="https://user-images.githubusercontent.com/48713768/201834606-2261caa3-e8df-48b2-bbfc-1f306423c670.png">
+
 ## Installation
 
 ```bash
 $ npm i -g nh-translation-helper
 ```
 
+### For Windows Users
+
+Installation may fail if you do not have the necessary environment for build.<br> In that case, please reinstall Node.js and be sure to install "Tools for Native Modules".
+
 ## Features
 
 - Generate english.json
-  - Extract the text (dialogue, ship logs, etc.) from XML files and generate a english.json.
+  - Extract the text (dialogue, ship logs, etc.) from XML files and generate an english.json.
   - The XML file name is inserted into the JSON as a comment, which is useful for translation work because you know which scene the text is from.
 - Translate JSON (DeepL API Key required)
 
