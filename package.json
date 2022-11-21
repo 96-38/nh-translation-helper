@@ -1,6 +1,6 @@
 {
   "name": "nh-translation-helper",
-  "version": "0.1.9",
+  "version": "0.2.0",
   "description": "A small CLI tool to help with multilingual support for the New Horizons based Outer Wilds story mod.",
   "license": "MIT",
   "main": "index.js",
@@ -27,9 +27,7 @@
     "ora": "^5.4.1",
     "xml2json": "git+https://github.com/96-38/node-xml2json"
   },
-  "devDependencies": {
-    "ls-engines": "^0.7.0"
-  },
+  "devDependencies": {},
   "engines": {
     "node": ">= 12"
   }
