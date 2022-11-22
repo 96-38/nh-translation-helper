@@ -40,15 +40,14 @@ const translate = async ({
   targetLangCode,
   apiKey,
 }) => {
-  const translator = new deepl.Translator(apiKey);
   const spinner = ora("Translating...").start();
 
   const langList = require("./langList");
   const targetLangName = langList
-    .find((v) => v.code === targetLangCode)
+    .find((lang) => lang.code === targetLangCode)
     .name.toLowerCase();
   const sourceLangName = langList
-    .find((v) => v.code === sourceLangCode)
+    .find((lang) => lang.code === sourceLangCode)
     .name.toLowerCase();
 
   if (
@@ -78,6 +77,7 @@ const translate = async ({
         //Replace symbols that cause parsing errors
         match.replaceAll('"', "##").replaceAll(":", "%%").replaceAll("\\", "&&")
     );
+
   const replaceComments = (jsonString) =>
     jsonString.replaceAll(/ \/\/(.*)[\n\r\r\n]/gi, (match, p1) => {
       const trimmed = p1.trim();
@@ -98,91 +98,97 @@ const translate = async ({
   const json = parseJsonString(jsonString) || {};
 
   //extract dictionary object
-  const arrFromJson = Object.entries(json);
   const extractDictObj = (name, array) => {
     const index = array.findIndex((e) => e[0] === name);
-    return array[index]?.[1];
+    return array[index]?.[1] || {};
   };
 
-  const dialogueDict = extractDictObj("DialogueDictionary", arrFromJson) || {};
-  const shipLogsDict = extractDictObj("ShipLogDictionary", arrFromJson) || {};
-  const UIDict = extractDictObj("UIDictionary", arrFromJson) || {};
-  const achievementDict =
-    extractDictObj("AchievementTranslations", arrFromJson) || {};
+  const arrFromJson = Object.entries(json);
+  const dialogueDict = extractDictObj("DialogueDictionary", arrFromJson);
+  const shipLogsDict = extractDictObj("ShipLogDictionary", arrFromJson);
+  const UIDict = extractDictObj("UIDictionary", arrFromJson);
+  const achievementDict = extractDictObj(
+    "AchievementTranslations",
+    arrFromJson
+  );
 
   //generate text array
-  const objToTextArr = (obj) => Object.entries(obj).map((v) => removeTag(v[1]));
-  const dialogueArr = objToTextArr(dialogueDict || {});
-  const shipLogsArr = objToTextArr(shipLogsDict || {});
-  const UIArr = objToTextArr(UIDict || {});
+  const objToTextArr = (obj) =>
+    Object.entries(obj).map((property) => removeTag(property[1]));
 
-  const achievementKeyArr = Object.keys(achievementDict || {});
-  const achievementNameArr = Object.entries(achievementDict || {}).map(
-    (v) => v[1].Name
+  const dialogueArr = objToTextArr(dialogueDict);
+  const shipLogsArr = objToTextArr(shipLogsDict);
+  const UIArr = objToTextArr(UIDict);
+  const achievementKeyArr = Object.keys(achievementDict);
+  const achievementNameArr = Object.entries(achievementDict).map(
+    (property) => property[1].Name || "Please add manually."
   );
-  const achievementDescArr = Object.entries(achievementDict || {}).map(
-    (v) => v[1].Description
+  const achievementDescArr = Object.entries(achievementDict).map(
+    (property) => property[1].Description || "Please add manually."
   );
 
-  // translate text array
-  const translateText = async (targetTextArray, targetLangCode) =>
+  //translate text array
+  const translator = new deepl.Translator(apiKey);
+  const translateTextArray = async (targetTextArray, targetLangCode) =>
+    //If the second argument is set to null, source language is automatically detected.
     await translator.translateText(targetTextArray, null, targetLangCode);
 
-  const genTranslatedTextArray = async (targetTextArray) => {
-    const removeUndefined = (array) => array.filter((v) => v !== undefined);
-    if (
-      Array.isArray(targetTextArray) &&
-      !removeUndefined(targetTextArray).length
-    ) {
-      return;
-    }
+  const generateTranslatedTextArray = async (targetTextArray) => {
+    const isEmptyArray = (targetTextArray) =>
+      Array.isArray(targetTextArray) && !targetTextArray.length;
+
+    if (isEmptyArray(targetTextArray)) return [];
     try {
-      if (!targetTextArray.length) return null;
-      return [...(await translateText(targetTextArray, targetLangCode))].map(
-        (v) => v.text
-      );
+      return [
+        ...(await translateTextArray(targetTextArray, targetLangCode)),
+      ].map((response) => response.text);
     } catch (error) {
       spinner.stop();
       console.log(logSymbols.error, error.message);
       process.exit(1);
     }
   };
-  const translatedDialogueArr = await genTranslatedTextArray(dialogueArr);
-  const translatedShipLogsArr = await genTranslatedTextArray(shipLogsArr);
-  const translatedUIArr = await genTranslatedTextArray(UIArr);
 
-  const translatedAchievementNameArr = await genTranslatedTextArray(
+  const translatedDialogueArr = await generateTranslatedTextArray(dialogueArr);
+  const translatedShipLogsArr = await generateTranslatedTextArray(shipLogsArr);
+  const translatedUIArr = await generateTranslatedTextArray(UIArr);
+
+  const translatedAchievementNameArr = await generateTranslatedTextArray(
     achievementNameArr
   );
-  const translatedAchievementDescArr = await genTranslatedTextArray(
+  const translatedAchievementDescArr = await generateTranslatedTextArray(
     achievementDescArr
   );
 
   //generate translated dictionary object
-  const genTranslatedDict = (dictObj, translatedTextArray) =>
-    Object.entries(dictObj)
-      .map((v, i) => [v[0], translatedTextArray?.[i]])
-      .reduce((acc, curr) => {
-        return { ...acc, [curr[0]]: curr[1] };
-      }, {});
-  const translatedDialogueDict = genTranslatedDict(
+  const generateTranslatedDict = (dictObj, translatedTextArray) =>
+    translatedTextArray.length
+      ? Object.entries(dictObj)
+          .map((property, index) => [property[0], translatedTextArray[index]])
+          .reduce((acc, curr) => {
+            return { ...acc, [curr[0]]: curr[1] };
+          }, {})
+      : {};
+
+  const translatedDialogueDict = generateTranslatedDict(
     dialogueDict,
     translatedDialogueArr
   );
-  const translatedShipLogsDict = genTranslatedDict(
+  const translatedShipLogsDict = generateTranslatedDict(
     shipLogsDict,
     translatedShipLogsArr
   );
-  const translatedUIDict = genTranslatedDict(UIDict, translatedUIArr);
+  const translatedUIDict = generateTranslatedDict(UIDict, translatedUIArr);
 
-  const genTranslatedAchievementDict = (key, name, desc) =>
+  const generateTranslatedAchievementDict = (key, name, desc) =>
     key.reduce((acc, curr, index) => {
       return {
         ...acc,
         [curr]: { Name: name?.[index], Description: desc?.[index] },
       };
     }, {});
-  const translatedAchievementDict = genTranslatedAchievementDict(
+
+  const translatedAchievementDict = generateTranslatedAchievementDict(
     achievementKeyArr,
     translatedAchievementNameArr,
     translatedAchievementDescArr
