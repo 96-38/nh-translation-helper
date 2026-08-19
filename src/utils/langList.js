@@ -12,6 +12,7 @@ const langList = [
   { code: "ru", name: "Russian" },
   { code: "zh", name: "Chinese_simple" },
   { code: "tr", name: "Turkish" },
+  { code: "cs", name: "Czech" },
 ];
 
 module.exports = langList;

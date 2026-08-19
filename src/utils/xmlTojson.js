@@ -8,15 +8,17 @@ const logSymbols = require("log-symbols");
 const confirmFileOverwite = require("./confirmFileOverwrite");
 
 const xmlTojson = ({ projectRoot }) => {
-  if (!fs.existsSync(path.join(projectRoot, "planets"))) {
+  if (!fs.existsSync(path.join(projectRoot))) {
     console.log(logSymbols.error, "Path of the project root is invalid.");
     return;
   }
 
   const fileList = glob
     //normalize path for windows (glob only use forward-slashes)
-    .sync(normalize(path.join(projectRoot, "planets/**/*.xml")))
+    .sync(normalize(path.join(projectRoot, "**/*.xml")))
     .map((v) => normalize(v));
+
+  console.log("File List:", fileList); // Debugging line
 
   if (Array.isArray(fileList) && !fileList.length) {
     console.log(logSymbols.error, "XML file not found");
@@ -48,13 +50,19 @@ const xmlTojson = ({ projectRoot }) => {
         parser
           .toJson(xml, parseOptions)
           .DialogueTree[0].DialogueNode.flatMap((v) =>
-            v.DialogueOptionsList
+            v.DialogueOptionsList && v.Dialogue
               ? [
                   v.Dialogue.flatMap((v) => v.Page),
-                  v.DialogueOptionsList.flatMap((v) =>
-                    v.DialogueOption.flatMap((v) => v.Text)
+                  v.DialogueOptionsList.flatMap((v) => v.DialogueOption
+                  ? v.DialogueOption.flatMap((v) => v.Text)
+                  : ""
                   ),
                 ]
+              : v.DialogueOptionsList
+              ? v.DialogueOptionsList.flatMap((v) => v.DialogueOption
+                ? v.DialogueOption.flatMap((v) => v.Text)
+                : ""
+              )
               : v.Dialogue
               ? v.Dialogue.flatMap((v) => v.Page)
               : ""
@@ -65,27 +73,44 @@ const xmlTojson = ({ projectRoot }) => {
     return dialogueArr;
   };
 
+  const parseEntry = (entry) => {
+    const result = [];
+
+    // Extract the name
+    if (entry.Name) {
+      result.push(entry.Name);
+    }
+
+    // Extract RumorFact
+    if (entry.RumorFact) {
+      entry.RumorFact.forEach((fact) => {
+        result.push(fact.RumorName, fact.Text);
+      });
+    }
+
+    // Extract ExploreFact
+    if (entry.ExploreFact) {
+      entry.ExploreFact.forEach((fact) => {
+        result.push(fact.Text);
+      });
+    }
+
+    // Recursively parse nested entries
+    if (entry.Entry) {
+      entry.Entry.forEach((nestedEntry) => {
+        result.push(...parseEntry(nestedEntry));
+      });
+    }
+
+    return result;
+  };
+
   const parseXmlShipLogsDirToArr = (filePath) => {
     const xml = fs.readFileSync(filePath, "utf-8");
+    const json = parser.toJson(xml, parseOptions);
     const shipLogsArr = [
       ...new Set(
-        parser
-          .toJson(xml, parseOptions)
-          .AstroObjectEntry[0].Entry.flatMap((v) =>
-            v.RumorFact && v.ExploreFact
-              ? [
-                  v.Name,
-                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
-                  v.ExploreFact.flatMap((v) => v.Text),
-                ]
-              : v.ExploreFact
-              ? [v.Name, v.ExploreFact.flatMap((v) => v.Text)]
-              : [
-                  v.Name,
-                  v.RumorFact.flatMap((v) => [v.RumorName, v.Text]).flat(),
-                ]
-          )
-          .flat(Infinity)
+        json.AstroObjectEntry[0].Entry.flatMap((v) => parseEntry(v))
       ),
     ];
     return shipLogsArr;
@@ -122,8 +147,8 @@ const xmlTojson = ({ projectRoot }) => {
   const convertLineBreak = (arr) =>
     arr.map((vs) =>
       Array.isArray(vs)
-        ? vs.map((v) => v.replaceAll("\n", "\r\n"))
-        : vs.replaceAll("\n", "\r\n")
+        ? vs.map((v) => String(v).replaceAll("\n", "\r\n")) // Ensure v is a string
+        : String(vs).replaceAll("\n", "\r\n") // Ensure vs is a string
     );
 
   const convertedAllDialogueArr = convertLineBreak(allDialogueArr);
@@ -164,8 +189,11 @@ const xmlTojson = ({ projectRoot }) => {
     .replaceAll(/.xml@.+/g, "");
 
   const exportJSON = () => {
-    fs.mkdir(path.join(projectRoot, "translations"), (err) => {
-      return;
+    fs.mkdir(path.join(projectRoot, "translations"), { recursive: true }, (err) => {
+      if (err) {
+        console.log(logSymbols.error, "Failed to create translations directory.");
+        return;
+      }
     });
     fs.writeFile(
       path.join(projectRoot, "translations/english.json"),

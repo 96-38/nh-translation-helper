@@ -54,6 +54,7 @@ Installation may fail if you do not have the necessary environment for build.<br
     - Russian : ru
     - Chinese_simple : zh
     - Turkish : tr
+    - Czech : cs
 
 - Easy to use
   - Interactive UI so you just answer questions

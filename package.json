@@ -30,5 +30,8 @@
   "devDependencies": {},
   "engines": {
     "node": ">= 12"
+  },
+  "scripts": {
+    "start": "node ./src/index.js"
   }
 }
